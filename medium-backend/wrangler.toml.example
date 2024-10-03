@@ -4,7 +4,7 @@ compatibility_date = "2024-10-02"
 compatibility_flags = [ "nodejs_compat" ]
 
 # [vars]
--- DATABASE_URL="your connection url"
+# DATABASE_URL="your connection pool url"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
