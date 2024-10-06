@@ -29,14 +29,16 @@ userRouter.post("/signup", async (c) => {
 
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
 
-    return c.json({
-      message: "User signed up successfully!",
-      token: jwt,
-    });
+    return c.json(
+      {
+        message: "User signed up successfully!",
+        token: jwt,
+      },
+      200
+    );
   } catch (error) {
-    c.status(411);
     console.log(error);
-    return c.text("User already exist with this username or email");
+    return c.text("User already exist with this username or email", 411);
   }
 });
 
@@ -51,14 +53,12 @@ userRouter.post("/signin", async (c) => {
     });
 
     if (!user) {
-      c.status(404);
-      return c.json({ message: "User not found with this email" });
+      return c.json({ message: "User not found with this email" }, 404);
     }
 
     const isPasswordValid = await bcrypt.compare(body.password, user.password);
     if (!isPasswordValid) {
-      c.status(401);
-      return c.json({ message: "Invalid email or password" });
+      return c.json({ message: "Invalid email or password" }, 401);
     }
 
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
@@ -68,8 +68,7 @@ userRouter.post("/signin", async (c) => {
       token: jwt,
     });
   } catch (error) {
-    c.status(500);
     console.log(error);
-    return c.json({ message: "Internal Server Error" });
+    return c.json({ message: "Internal Server Error" }, 500);
   }
 });

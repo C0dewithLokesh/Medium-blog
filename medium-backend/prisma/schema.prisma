@@ -27,6 +27,6 @@ model Blog {
   content   String
   thumbnail String?
   published Boolean @default(false)
-  author    User    @relation(fields: [autorId], references: [id])
-  autorId   String
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId   String
 }
