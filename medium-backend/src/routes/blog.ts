@@ -1,3 +1,7 @@
+import {
+  createBlogInput,
+  updateBlogInput,
+} from "@c0dewithlokesh/medium-common";
 import { PrismaClient } from "@prisma/client/edge";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
@@ -35,6 +39,9 @@ blogRouter.post("/", async (c) => {
   const body = await c.req.json();
   const authorId = c.get("userId");
 
+  const { success } = createBlogInput.safeParse(body);
+  if (!success) return c.json({ message: "Inputs not correct" }, 400);
+
   try {
     const blog = await prisma.blog.create({
       data: {
@@ -62,6 +69,9 @@ blogRouter.post("/", async (c) => {
 blogRouter.put("/", async (c) => {
   const prisma = c.get("prisma" as never) as PrismaClient;
   const body = await c.req.json();
+
+  const { success } = updateBlogInput.safeParse(body);
+  if (!success) return c.json({ message: "Inputs not correct" }, 400);
 
   try {
     const blog = await prisma.blog.update({
@@ -100,7 +110,6 @@ blogRouter.get("/bulk", async (c) => {
     return c.json({ message: "Failed to fetch the blogs!" }, 500);
   }
 });
-
 
 blogRouter.get("/:id", async (c) => {
   const prisma = c.get("prisma" as never) as PrismaClient;

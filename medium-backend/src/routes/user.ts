@@ -1,3 +1,4 @@
+import { signInInput, signupInput } from "@c0dewithlokesh/medium-common";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { Hono } from "hono";
@@ -13,6 +14,9 @@ export const userRouter = new Hono<{
 userRouter.post("/signup", async (c) => {
   const prisma = c.get("prisma" as never) as PrismaClient;
   const body = await c.req.json();
+
+  const { success } = signupInput.safeParse(body);
+  if (!success) return c.json({ message: "Inputs not correct" }, 400);
 
   // Hashing the password before saving it
   const saltRounds = 10;
@@ -45,6 +49,10 @@ userRouter.post("/signup", async (c) => {
 userRouter.post("/signin", async (c) => {
   const prisma = c.get("prisma" as never) as PrismaClient;
   const body = await c.req.json();
+
+  const { success } = signInInput.safeParse(body);
+  if (!success) return c.json({ message: "Inputs not correct" }, 400);
+
   try {
     const user = await prisma.user.findFirst({
       where: {
